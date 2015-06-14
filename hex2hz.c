@@ -22,6 +22,8 @@
 #define EXIT_SUCCESS 1
 #define EXIT_FAILURE 0
 
+void hex_print(unsigned char byte);
+
 int main(int argc, char **argv){
     if (argc != 2){
         fprintf(stderr, "Usage: hex2hz inputFile \n");
@@ -47,6 +49,35 @@ int main(int argc, char **argv){
     
     printf("File %s has %ld bytes.\n", argv[1], num_bytes);
     
+    // Read each byte
+    unsigned char byte;
+    for (size_t i = 0; (long)i < num_bytes; i++){
+        fread(&byte, 1, 1, file);
+        hex_print(byte);
+    }
+
+
     fclose(file);
     return 0;
 }
+
+
+// For the byte AB, 0->A and 1->B
+size_t get_nibble(size_t byte, size_t number){
+    if (!number){
+        return (byte & 0xf0) >> 4;
+    }
+    else {
+        return (byte & 0xf);
+    }
+}
+
+void hex_print(unsigned char byte){
+    size_t first = get_nibble(byte,0) ;     
+    size_t second = get_nibble(byte,1);
+    printf("Byte 0x%X (%u)\n", (unsigned short)byte, (unsigned short)byte);
+    printf("First Nibble: 0x%zx (%zu)\n", first);
+    printf("Second Nibble: 0x%zx (%zu)\n", second);
+}
+
+
